@@ -2,7 +2,7 @@
 ## Title: Pudge QoL
 ## Notes: Generic quality-of-life tweaks, one feature per file
 ## Author: Pudge
-## Version: 1.8
+## Version: 1.9
 ## SavedVariables: Pudge_QoLDB
 
 Core.lua
@@ -12,4 +12,5 @@ Questing\Questing.lua
 Questing\QuestTurnIn.lua
 Questing\QuestAccept.lua
 Vendoring\Vendoring.lua
+Tooltips\Tooltips.lua
 Vendoring\JunkTint.lua

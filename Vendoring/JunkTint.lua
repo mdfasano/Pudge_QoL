@@ -72,3 +72,20 @@ end
 if OpenAllBags then
     hooksecurefunc("OpenAllBags", function() C_Timer.After(0, PudgeQoL_RefreshJunkTint) end)
 end
+
+-- Bag buttons are created the first time bags open, which can happen after login.
+-- While any bag is visible, re-check the tint every half second so new buttons get it.
+local function AnyBagShown()
+    if ContainerFrameCombinedBags and ContainerFrameCombinedBags:IsShown() then return true end
+    for i = 1, (NUM_CONTAINER_FRAMES or 13) do
+        local f = _G["ContainerFrame" .. i]
+        if f and f:IsShown() then return true end
+    end
+    return false
+end
+
+C_Timer.NewTicker(0.5, function()
+    if AnyBagShown() then
+        PudgeQoL_RefreshJunkTint()
+    end
+end)

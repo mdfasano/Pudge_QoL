@@ -23,15 +23,20 @@ local function GetTint(button)
     return button.pudgeJunkTint
 end
 
--- Calls fn(button) for every bag item button we can find
-local function ForEachBagButton(fn)
+-- Bag frames that hold item buttons
+local function GetBagFrames()
     local frames = {}
     if ContainerFrameCombinedBags then table.insert(frames, ContainerFrameCombinedBags) end
     for i = 1, (NUM_CONTAINER_FRAMES or 13) do
         local f = _G["ContainerFrame" .. i]
         if f then table.insert(frames, f) end
     end
-    for _, frame in ipairs(frames) do
+    return frames
+end
+
+-- Calls fn(button) for every bag item button we can find
+local function ForEachBagButton(fn)
+    for _, frame in ipairs(GetBagFrames()) do
         if frame.EnumerateValidItems then
             for _, button in frame:EnumerateValidItems() do fn(button) end
         else
@@ -42,7 +47,7 @@ local function ForEachBagButton(fn)
     end
 end
 
--- Shows or hides the tint on every bag button. Called by Vendoring.lua and on bag events.
+-- Shows or hides the tint on every bag button. Called by Vendoring.lua and the triggers below.
 function PudgeQoL_RefreshJunkTint()
     local enabled = ns.IsEnabled("junkTint")
     ForEachBagButton(function(button)
@@ -58,34 +63,33 @@ function PudgeQoL_RefreshJunkTint()
     end)
 end
 
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("BAG_UPDATE_DELAYED")
-frame:SetScript("OnEvent", function()
-    PudgeQoL_RefreshJunkTint()
-end)
-
--- Bags can open without a bag event, so refresh when they're toggled
-if ToggleAllBags then
-    hooksecurefunc("ToggleAllBags", function() C_Timer.After(0, PudgeQoL_RefreshJunkTint) end)
-end
-if OpenAllBags then
-    hooksecurefunc("OpenAllBags", function() C_Timer.After(0, PudgeQoL_RefreshJunkTint) end)
+local function RefreshSoon()
+    C_Timer.After(0.1, PudgeQoL_RefreshJunkTint)
 end
 
--- Bag buttons are created the first time bags open, which can happen after login.
--- While any bag is visible, re-check the tint every half second so new buttons get it.
-local function AnyBagShown()
-    if ContainerFrameCombinedBags and ContainerFrameCombinedBags:IsShown() then return true end
-    for i = 1, (NUM_CONTAINER_FRAMES or 13) do
-        local f = _G["ContainerFrame" .. i]
-        if f and f:IsShown() then return true end
+-- Refresh whenever a bag frame is shown, since its buttons may only exist from then on
+local hooked = {}
+local function HookBagFrames()
+    for _, frame in ipairs(GetBagFrames()) do
+        if not hooked[frame] then
+            frame:HookScript("OnShow", RefreshSoon)
+            hooked[frame] = true
+        end
     end
-    return false
 end
 
-C_Timer.NewTicker(0.5, function()
-    if AnyBagShown() then
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("PLAYER_LOGIN")          -- once per login or reload
+frame:RegisterEvent("BAG_UPDATE_DELAYED")    -- when items move, are added, or are sold
+frame:SetScript("OnEvent", function(_, event)
+    if event == "PLAYER_LOGIN" then
+        HookBagFrames()
+        C_Timer.After(1, PudgeQoL_RefreshJunkTint)
+    else
         PudgeQoL_RefreshJunkTint()
     end
 end)
+
+-- Bag frames can be created after login, so hook them when bags are toggled too
+if ToggleAllBags then hooksecurefunc("ToggleAllBags", HookBagFrames) end
+if OpenAllBags then hooksecurefunc("OpenAllBags", HookBagFrames) end

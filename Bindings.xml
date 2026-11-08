@@ -1,0 +1,5 @@
+<Bindings>
+  <Binding name="PUDGEQOL_TOGGLE_JUNK" header="PUDGEQOL"><![CDATA[
+    if keystate == "down" then PudgeQoL_ToggleJunkUnderMouse() end
+  ]]></Binding>
+</Bindings>

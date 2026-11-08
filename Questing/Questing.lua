@@ -1,0 +1,3 @@
+-- Creates the Questing section on the Pudge QoL options panel.
+local addonName, ns = ...
+ns.RegisterGroup("questing", "Questing")

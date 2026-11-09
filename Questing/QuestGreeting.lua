@@ -81,11 +81,25 @@ local function HandleGossip()
     return false
 end
 
+-- Runs after a quest is accepted or turned in. The list usually comes back
+-- on its own, so pick up the next quest once it's showing again.
+local function ContinueAfterQuest()
+    C_Timer.After(1.0, function()
+        if GreetingShown() then
+            HandleGreeting()
+        elseif GossipShown() then
+            HandleGossip()
+        end
+    end)
+end
+
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("QUEST_GREETING")   -- several quests from one NPC
 frame:RegisterEvent("GOSSIP_SHOW")      -- gossip menu, which can list quests
 frame:RegisterEvent("GOSSIP_CLOSED")
 frame:RegisterEvent("QUEST_FINISHED")   -- each quest screen closes
+frame:RegisterEvent("QUEST_ACCEPTED")   -- a quest was accepted
+frame:RegisterEvent("QUEST_TURNED_IN")  -- a quest was turned in
 frame:SetScript("OnEvent", function(_, event)
     if event == "QUEST_GREETING" then
         C_Timer.After(0.1, HandleGreeting)
@@ -93,6 +107,8 @@ frame:SetScript("OnEvent", function(_, event)
         C_Timer.After(0.1, HandleGossip)
     elseif event == "GOSSIP_CLOSED" then
         steps = 0
+    elseif event == "QUEST_ACCEPTED" or event == "QUEST_TURNED_IN" then
+        ContinueAfterQuest()
     elseif event == "QUEST_FINISHED" then
         -- If the list is back on screen, carry on with the next quest
         C_Timer.After(0.3, function()

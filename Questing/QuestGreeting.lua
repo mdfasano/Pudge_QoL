@@ -24,7 +24,7 @@ end
 -- Shared guard: skip while Shift is held, ignore duplicate triggers, cap the steps
 local function CanAct()
     if IsShiftKeyDown() then return false end
-    if GetTime() - lastRun < 0.8 then return false end
+    if GetTime() - lastRun < 0.2 then return false end
     if steps >= MAX_STEPS then return false end
     lastRun = GetTime()
     return true
@@ -84,13 +84,16 @@ end
 -- Runs after a quest is accepted or turned in. The list usually comes back
 -- on its own, so pick up the next quest once it's showing again.
 local function ContinueAfterQuest()
-    C_Timer.After(1.0, function()
-        if GreetingShown() then
-            HandleGreeting()
-        elseif GossipShown() then
-            HandleGossip()
-        end
-    end)
+    -- The list can take a moment to come back, so check a few times shortly after
+    for _, delay in ipairs({ 0.1, 0.25, 0.5 }) do
+        C_Timer.After(delay, function()
+            if GreetingShown() then
+                HandleGreeting()
+            elseif GossipShown() then
+                HandleGossip()
+            end
+        end)
+    end
 end
 
 local frame = CreateFrame("Frame")
@@ -102,9 +105,9 @@ frame:RegisterEvent("QUEST_ACCEPTED")   -- a quest was accepted
 frame:RegisterEvent("QUEST_TURNED_IN")  -- a quest was turned in
 frame:SetScript("OnEvent", function(_, event)
     if event == "QUEST_GREETING" then
-        C_Timer.After(0.1, HandleGreeting)
+        C_Timer.After(0, HandleGreeting)
     elseif event == "GOSSIP_SHOW" then
-        C_Timer.After(0.1, HandleGossip)
+        C_Timer.After(0, HandleGossip)
     elseif event == "GOSSIP_CLOSED" then
         steps = 0
     elseif event == "QUEST_ACCEPTED" or event == "QUEST_TURNED_IN" then

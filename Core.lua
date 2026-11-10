@@ -79,6 +79,11 @@ local builder = CreateFrame("Frame")
 builder:RegisterEvent("PLAYER_LOGIN")
 builder:SetScript("OnEvent", function(self)
     self:UnregisterEvent("PLAYER_LOGIN")
+    -- Per-character settings, keyed by name and realm
+    Pudge_QoLDB.characters = Pudge_QoLDB.characters or {}
+    local charKey = UnitName("player") .. "-" .. GetRealmName()
+    Pudge_QoLDB.characters[charKey] = Pudge_QoLDB.characters[charKey] or {}
+    ns.char = Pudge_QoLDB.characters[charKey]
     BuildCheckboxes(rootPanel, nil)
     for _, key in ipairs(ns.groupOrder) do
         BuildCheckboxes(ns.groups[key].panel, key)

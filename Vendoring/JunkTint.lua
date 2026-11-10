@@ -7,7 +7,7 @@ local TINT_COLOR = { 0.35, 0.35, 0.35, 0.6 }   -- grey, semi-transparent
 local GetItemIDAt = (C_Container and C_Container.GetContainerItemID) or GetContainerItemID
 
 local function IsJunk(itemID)
-    local junk = ns.db and ns.db.junkItems
+    local junk = ns.char and ns.char.junkItems
     return itemID ~= nil and junk ~= nil and junk[itemID] ~= nil
 end
 

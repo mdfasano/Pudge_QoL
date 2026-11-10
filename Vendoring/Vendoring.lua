@@ -15,8 +15,9 @@ local UseItemAt    = (C_Container and C_Container.UseContainerItem) or UseContai
 
 -- Junk list lives in the saved variables: [itemID] = item name
 local function JunkList()
-    ns.db.junkItems = ns.db.junkItems or {}
-    return ns.db.junkItems
+    if not ns.char then return {} end
+    ns.char.junkItems = ns.char.junkItems or {}
+    return ns.char.junkItems
 end
 
 local function ItemNameFor(itemID)
@@ -128,7 +129,7 @@ SlashCmdList["PQJUNK"] = function(msg)
         print(PREFIX .. "removed item " .. arg .. " from junk.")
         PudgeQoL_RefreshJunkTint()
     elseif cmd == "clear" then
-        ns.db.junkItems = {}
+        if ns.char then ns.char.junkItems = {} end
         print(PREFIX .. "junk list cleared.")
         PudgeQoL_RefreshJunkTint()
     else

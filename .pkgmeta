@@ -1,0 +1,8 @@
+# Files left out of the release zip
+package-as: Pudge_QoL
+
+ignore:
+  - .git
+  - .github
+  - .gitignore
+  - .pkgmeta

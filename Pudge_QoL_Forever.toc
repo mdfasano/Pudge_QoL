@@ -1,0 +1,18 @@
+## Interface: 16001
+## Title: Pudge QoL
+## Notes: Generic quality-of-life tweaks, one feature per file
+## Author: Pudge
+## Version: 1.17
+## SavedVariables: Pudge_QoLDB
+## SavedVariablesPerCharacter: Pudge_QoLChar
+
+Core.lua
+SlashCommands\SlashCommands.lua
+AutoLoot\AutoLoot.lua
+Questing\Questing.lua
+Questing\QuestTurnIn.lua
+Questing\QuestAccept.lua
+Questing\QuestGreeting.lua
+Vendoring\Vendoring.lua
+Tooltips\Tooltips.lua
+Vendoring\JunkTint.lua

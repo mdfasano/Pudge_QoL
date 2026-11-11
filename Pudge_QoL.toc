@@ -2,8 +2,9 @@
 ## Title: Pudge QoL
 ## Notes: Generic quality-of-life tweaks, one feature per file
 ## Author: Pudge
-## Version: 1.15
+## Version: 1.16
 ## SavedVariables: Pudge_QoLDB
+## SavedVariablesPerCharacter: Pudge_QoLChar
 
 Core.lua
 SlashCommands\SlashCommands.lua

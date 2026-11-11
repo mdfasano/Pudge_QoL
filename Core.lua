@@ -25,6 +25,10 @@ loader:SetScript("OnEvent", function(self, _, name)
     self:UnregisterEvent("ADDON_LOADED")
     Pudge_QoLDB = Pudge_QoLDB or {}
     ns.db = Pudge_QoLDB
+    -- Remove the old account-wide junk list and the earlier per-character table.
+    -- Junk lists now live in each character's own saved variables.
+    Pudge_QoLDB.junkItems = nil
+    Pudge_QoLDB.characters = nil
 end)
 
 -- Main panel (registered in the Blizzard "AddOns" category)
